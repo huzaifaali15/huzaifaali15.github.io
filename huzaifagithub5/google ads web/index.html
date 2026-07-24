@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>www.typefastoro.com</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0D0F12;
+    --bg-raised: #14171C;
+    --key: #1B1F26;
+    --key-border: #2B313B;
+    --ink: #E8E6E1;
+    --ink-dim: #8A9099;
+    --amber: #FFB000;
+    --amber-dim: #7A5A0E;
+    --green: #4ADE80;
+    --red: #F0554A;
+    --mono: 'JetBrains Mono', monospace;
+    --display: 'Space Grotesk', sans-serif;
+    --body: 'Inter', sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background: radial-gradient(1200px 600px at 50% -10%, #171B21 0%, var(--bg) 55%);
+    color: var(--ink);
+    font-family: var(--body);
+    min-height:100vh;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;}
+  ::selection{background: var(--amber); color:#111;}
+
+  /* ---------- Header ---------- */
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 22px clamp(20px,5vw,64px);
+    border-bottom: 1px solid #1D2128;
+  }
+  .logo{
+    font-family: var(--mono); font-weight:800; font-size:1.15rem; letter-spacing:0.5px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .logo .dot{width:8px; height:8px; border-radius:50%; background:var(--amber); box-shadow:0 0 12px var(--amber); display:inline-block;}
+  nav{display:flex; gap:28px; font-size:0.92rem; color:var(--ink-dim);}
+  nav a{text-decoration:none; transition:color .15s;}
+  nav a:hover{color:var(--amber);}
+
+  /* ---------- Hero / Test ---------- */
+  .hero{
+    padding: clamp(28px,5vw,56px) clamp(20px,5vw,64px) 20px;
+    max-width: 980px; margin: 0 auto;
+  }
+  .eyebrow{
+    font-family: var(--mono); color:var(--amber); font-size:0.78rem; letter-spacing:2px; text-transform:uppercase;
+    display:flex; align-items:center; gap:10px; margin-bottom:14px;
+  }
+  .eyebrow::before{content:''; width:22px; height:1px; background:var(--amber-dim);}
+  h1{
+    font-family:var(--display); font-weight:700; font-size:clamp(2rem,5vw,3.2rem);
+    line-height:1.05; letter-spacing:-1px; max-width: 14ch;
+  }
+  h1 span{color:var(--amber);}
+  .sub{color:var(--ink-dim); margin-top:14px; max-width:56ch; font-size:1.02rem;}
+
+  /* controls row */
+  .controls{
+    display:flex; flex-wrap:wrap; gap:10px; align-items:center;
+    margin-top:28px;
+  }
+  .chip-group{display:flex; gap:6px; background:var(--bg-raised); padding:4px; border-radius:10px; border:1px solid var(--key-border);}
+  .chip{
+    font-family:var(--mono); font-size:0.82rem; color:var(--ink-dim);
+    background:transparent; border:none; padding:7px 13px; border-radius:7px; cursor:pointer;
+    transition: all .15s;
+  }
+  .chip:hover{color:var(--ink);}
+  .chip.active{background:var(--amber); color:#111; font-weight:700;}
+  .divider-dot{color:var(--key-border);}
+  #resetBtn{
+    font-family:var(--mono); font-size:0.82rem; color:var(--ink-dim);
+    background:var(--bg-raised); border:1px solid var(--key-border); padding:8px 14px; border-radius:10px; cursor:pointer;
+    transition: all .15s;
+  }
+  #resetBtn:hover{border-color:var(--amber); color:var(--amber);}
+
+  /* stat readout */
+  .stats{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:1px;
+    background: var(--key-border);
+    border:1px solid var(--key-border); border-radius:14px; overflow:hidden;
+    margin-top:22px;
+  }
+  .stat{
+    background: var(--bg-raised); padding:16px 10px; text-align:center;
+  }
+  .stat .num{
+    font-family:var(--mono); font-weight:800; font-size:clamp(1.4rem,3vw,2.1rem); color:var(--amber);
+    font-variant-numeric: tabular-nums;
+  }
+  .stat .lab{font-size:0.68rem; color:var(--ink-dim); text-transform:uppercase; letter-spacing:1.5px; margin-top:4px;}
+
+  /* typing box */
+  .type-box{
+    margin-top:20px; background:var(--bg-raised); border:1px solid var(--key-border); border-radius:16px;
+    padding: clamp(20px,4vw,36px); position:relative; overflow:hidden;
+  }
+  .type-box::before{
+    content:''; position:absolute; inset:0; pointer-events:none; opacity:0;
+    background: radial-gradient(500px 200px at var(--mx,50%) 0%, rgba(255,176,0,0.06), transparent 60%);
+    transition: opacity .3s;
+  }
+  .type-box.focused::before{opacity:1;}
+  #textDisplay{
+    font-family:var(--mono); font-size:clamp(1.05rem,2.4vw,1.4rem); line-height:1.9;
+    letter-spacing:0.5px; color:var(--ink-dim); user-select:none;
+    height: 5.7em; overflow:hidden; position:relative;
+  }
+  #textInner{
+    word-wrap:break-word; overflow-wrap:break-word;
+    transition: transform .18s ease;
+  }
+  #textDisplay span{ position:relative; }
+  #textDisplay span.correct{color:var(--ink);}
+  #textDisplay span.incorrect{color:var(--red); background: rgba(240,85,74,0.12); border-radius:2px;}
+  #textDisplay span.current{
+    background: var(--amber); color:#111; border-radius:2px;
+  }
+  #hiddenInput{
+    position:absolute; opacity:0; pointer-events:none;
+  }
+  .overlay-msg{
+    margin-top:16px; font-family:var(--mono); font-size:0.85rem; color:var(--ink-dim);
+    display:flex; align-items:center; gap:8px;
+  }
+  .kbd{
+    font-family:var(--mono); font-size:0.72rem; background:var(--key); border:1px solid var(--key-border);
+    border-bottom:2px solid var(--key-border); padding:2px 7px; border-radius:5px; color:var(--ink);
+  }
+
+  /* results */
+  .results{
+    display:none; margin-top:20px; background:var(--bg-raised); border:1px solid var(--amber-dim); border-radius:16px;
+    padding: clamp(20px,4vw,32px); text-align:center;
+  }
+  .results.show{display:block;}
+  .results .big{font-family:var(--mono); font-weight:800; font-size:clamp(2.4rem,7vw,4rem); color:var(--amber); line-height:1;}
+  .results .big-lab{color:var(--ink-dim); font-size:0.8rem; letter-spacing:2px; text-transform:uppercase; margin-top:6px;}
+  .results .grid{display:flex; justify-content:center; gap:clamp(20px,5vw,48px); margin-top:20px; flex-wrap:wrap;}
+  .results .grid div{font-family:var(--mono);}
+  .results .grid .v{font-size:1.3rem; font-weight:700;}
+  .results .grid .l{font-size:0.68rem; color:var(--ink-dim); text-transform:uppercase; letter-spacing:1px;}
+  .try-again{
+    margin-top:22px; font-family:var(--mono); background:var(--amber); color:#111; border:none;
+    padding:11px 22px; border-radius:10px; font-weight:700; cursor:pointer; font-size:0.85rem;
+  }
+
+  /* ---------- Course section ---------- */
+  .course{
+    max-width:1100px; margin: 60px auto 0; padding: 40px clamp(20px,5vw,64px) 80px;
+    border-top:1px solid #1D2128;
+  }
+  .course-head{margin-top:36px; margin-bottom:30px;}
+  .course-head h2{font-family:var(--display); font-size:clamp(1.6rem,3.5vw,2.2rem); font-weight:700;}
+  .course-head p{color:var(--ink-dim); margin-top:8px; max-width:60ch;}
+
+  .track{margin-bottom:38px;}
+  .track-title{
+    display:flex; align-items:center; gap:12px; margin-bottom:16px;
+  }
+  .track-title .lvl{
+    font-family:var(--mono); font-size:0.72rem; letter-spacing:2px; text-transform:uppercase;
+    padding:4px 10px; border-radius:6px; font-weight:700;
+  }
+  .lvl.beginner{background:rgba(74,222,128,0.12); color:var(--green);}
+  .lvl.intermediate{background:rgba(255,176,0,0.12); color:var(--amber);}
+  .lvl.advanced{background:rgba(240,85,74,0.12); color:var(--red);}
+  .track-title h3{font-family:var(--display); font-size:1.15rem; font-weight:600; color:var(--ink-dim);}
+
+  .keycaps{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(210px,1fr)); gap:12px;
+  }
+  .keycap{
+    background: linear-gradient(180deg, var(--key) 0%, #171A20 100%);
+    border:1px solid var(--key-border); border-bottom:3px solid #12151A;
+    border-radius:12px; padding:16px 16px 14px; cursor:pointer; text-align:left;
+    transition: transform .12s, border-color .15s, box-shadow .15s;
+    display:flex; flex-direction:column; gap:6px;
+  }
+  .keycap:hover{
+    transform: translateY(-3px);
+    border-color: var(--amber-dim);
+    box-shadow: 0 8px 20px rgba(255,176,0,0.08);
+  }
+  .keycap:active{transform: translateY(0px);}
+  .keycap.active-lesson{border-color:var(--amber); box-shadow:0 0 0 1px var(--amber);}
+  .keycap .kc-num{font-family:var(--mono); font-size:0.7rem; color:var(--amber); font-weight:700;}
+  .keycap .kc-title{font-family:var(--display); font-weight:600; font-size:0.98rem;}
+  .keycap .kc-desc{font-size:0.8rem; color:var(--ink-dim); line-height:1.4;}
+
+  footer{
+    text-align:center; padding:28px; color:var(--ink-dim); font-family:var(--mono); font-size:0.78rem;
+    border-top:1px solid #1D2128;
+  }
+
+  @media (max-width:640px){
+    .stats{grid-template-columns:repeat(2,1fr);}
+    nav{display:none;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important; scroll-behavior:auto !important;}
+  }
+</style>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4610795322431234"
+     crossorigin="anonymous"></script>
+</head>
+<body>
+
+<header>
+  <div class="logo"><span class="dot"></span>TYPEFAST<span style="color:var(--ink-dim); font-weight:500;">ORO</span></div>
+  <nav>
+    <a href="#test">Test</a>
+    <a href="#course">Course</a>
+  </nav>
+</header>
+
+<section class="hero" id="test">
+  <div class="eyebrow">Typing Speed Test</div>
+  <h1>Type faster. <span>Prove it.</span></h1>
+  <p class="sub">Real-time WPM, accuracy, and error tracking. Pick a time limit, start typing, and watch your speed climb — then work through the course below to actually get faster.</p>
+
+  <div class="controls">
+    <div class="chip-group" id="timeChips">
+      <button class="chip" data-time="15">15s</button>
+      <button class="chip active" data-time="30">30s</button>
+      <button class="chip" data-time="60">60s</button>
+      <button class="chip" data-time="120">120s</button>
+    </div>
+    <span class="divider-dot">·</span>
+    <div class="chip-group" id="diffChips">
+      <button class="chip active" data-diff="words">Common Words</button>
+      <button class="chip" data-diff="sentences">Sentences</button>
+    </div>
+    <button id="resetBtn">↻ New text</button>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="num" id="statTime">30</div><div class="lab">Seconds Left</div></div>
+    <div class="stat"><div class="num" id="statWpm">0</div><div class="lab">WPM</div></div>
+    <div class="stat"><div class="num" id="statAcc">100%</div><div class="lab">Accuracy</div></div>
+    <div class="stat"><div class="num" id="statErr">0</div><div class="lab">Errors</div></div>
+  </div>
+
+  <div class="type-box" id="typeBox">
+    <div id="textDisplay"><div id="textInner"></div></div>
+    <input id="hiddenInput" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+    <div class="overlay-msg"><span class="kbd">click box</span> or start typing to begin — <span class="kbd">esc</span> to restart</div>
+  </div>
+
+  <div class="results" id="results">
+    <div class="big" id="resultWpm">0</div>
+    <div class="big-lab">Words Per Minute</div>
+    <div class="grid">
+      <div><div class="v" id="resultAcc">100%</div><div class="l">Accuracy</div></div>
+      <div><div class="v" id="resultRaw">0</div><div class="l">Raw WPM</div></div>
+      <div><div class="v" id="resultChars">0</div><div class="l">Characters</div></div>
+      <div><div class="v" id="resultErr">0</div><div class="l">Errors</div></div>
+    </div>
+    <button class="try-again" id="tryAgainBtn">Try again</button>
+  </div>
+</section>
+
+<section class="course" id="course">
+  <div class="course-head">
+    <h2>The TYPEFASTER Course</h2>
+    <p>Six lessons, beginner to advanced. Click any key below to load it straight into the tester above and drill it.</p>
+  </div>
+
+  <div id="courseTracks"></div>
+</section>
+
+<footer>TYPEFASTER.COM — built for people who hate slow typing.</footer>
+
+<script>
+(function(){
+
+  /* ---------------- Content ---------------- */
+  const commonWords = ("the of and a to in is you that it he was for on are as with his they I at be this have from or one had by word but not what all were we when your can said there use an each which she do how their if will up other about out many then them these so some her would make like him into time has look two more write go see number no way could people my than first water been call who oil its now find long down day did get come made may part over new sound take only little work know place year live me back give most very after thing our just name good sentence man think say great where help through much before line right too mean old any same tell boy follow came want show also around form three small set put end does another well large must big even such because turn here why ask went men read need land different home us move try kind hand picture again change off play spell air away animal house point page letter mother answer found study still learn should America world").split(" ");
+
+  const sentences = [
+    "The quick brown fox jumps over the lazy dog near the riverbank every morning.",
+    "Success is not final, failure is not fatal, it is the courage to continue that counts.",
+    "A journey of a thousand miles begins with a single step forward into the unknown.",
+    "The best time to plant a tree was twenty years ago, and the second best time is now.",
+    "Practice does not make perfect, but deliberate practice over time builds real mastery.",
+    "Good typing speed comes from rhythm, accuracy, and the confidence to stop looking down.",
+    "Every keystroke you take today is training your fingers for tomorrow's fluency.",
+    "Clear thinking leads to clear writing, and clear writing leads to clear typing.",
+    "The internet moves fast, but your fingers move faster once you trust the process.",
+    "Small consistent habits compound into skills that once seemed completely out of reach."
+  ];
+
+  const courseData = [
+    { level:"beginner", label:"Beginner", lessons:[
+      {title:"Home Row Basics", desc:"asdf jkl; — anchor your fingers.", text:"asdf jkl; asdf jkl; fjfj dkdk slsl a; a; sad lad ask fall jak all salad flask dad lad flask"},
+      {title:"Common Short Words", desc:"The words you'll type most often.", text:"the and for you are was his had not what all were when your can said there use each"}
+    ]},
+    { level:"intermediate", label:"Intermediate", lessons:[
+      {title:"Full Sentences", desc:"Real sentence rhythm and flow.", text: sentences.slice(0,3).join(" ")},
+      {title:"Punctuation & Numbers", desc:"Commas, periods, and digits mixed in.", text:"On July 23, 2026, the team shipped v2.4.1 — 3 features, 12 fixes, and 1 big surprise! Cost: $49.99 (was $79.99)."}
+    ]},
+    { level:"advanced", label:"Advanced", lessons:[
+      {title:"Code & Symbols", desc:"Brackets, operators, and syntax.", text:"function wpm(chars, minutes) { return Math.round((chars / 5) / minutes); } const acc = correct / total * 100; if (acc >= 95) console.log('clean run');"},
+      {title:"Speed Drills", desc:"Short, dense bursts — no mercy.", text:"zap flux vortex quirk jazzy bling whiz nymph glyph vex nook jolt yak brisk crux wisp zag hulk pique"}
+    ]}
+  ];
+
+  /* ---------------- Render course ---------------- */
+  const tracksEl = document.getElementById('courseTracks');
+  let lessonCounter = 0;
+  courseData.forEach(track => {
+    const trackEl = document.createElement('div');
+    trackEl.className = 'track';
+    trackEl.innerHTML = `<div class="track-title"><span class="lvl ${track.level}">${track.label}</span><h3>${track.lessons.length} lessons</h3></div>`;
+    const capsEl = document.createElement('div');
+    capsEl.className = 'keycaps';
+    track.lessons.forEach(lesson => {
+      lessonCounter++;
+      const cap = document.createElement('button');
+      cap.className = 'keycap';
+      cap.dataset.text = lesson.text;
+      cap.innerHTML = `<span class="kc-num">${String(lessonCounter).padStart(2,'0')}</span><span class="kc-title">${lesson.title}</span><span class="kc-desc">${lesson.desc}</span>`;
+      cap.addEventListener('click', () => {
+        document.querySelectorAll('.keycap').forEach(k => k.classList.remove('active-lesson'));
+        cap.classList.add('active-lesson');
+        loadCustomText(lesson.text);
+        document.getElementById('test').scrollIntoView({behavior:'smooth'});
+        hiddenInput.focus();
+      });
+      capsEl.appendChild(cap);
+    });
+    trackEl.appendChild(capsEl);
+    tracksEl.appendChild(trackEl);
+  });
+
+  /* ---------------- Typing test engine ---------------- */
+  const textDisplay = document.getElementById('textDisplay');
+  const hiddenInput = document.getElementById('hiddenInput');
+  const typeBox = document.getElementById('typeBox');
+  const statTime = document.getElementById('statTime');
+  const statWpm = document.getElementById('statWpm');
+  const statAcc = document.getElementById('statAcc');
+  const statErr = document.getElementById('statErr');
+  const resultsEl = document.getElementById('results');
+  const resetBtn = document.getElementById('resetBtn');
+  const tryAgainBtn = document.getElementById('tryAgainBtn');
+  const timeChips = document.querySelectorAll('#timeChips .chip');
+  const diffChips = document.querySelectorAll('#diffChips .chip');
+
+  let timeLimit = 30;
+  let difficulty = 'words';
+  let timeLeft = timeLimit;
+  let timerId = null;
+  let started = false;
+  let finished = false;
+  let typedChars = [];
+  let correctCount = 0;
+  let errorCount = 0;
+  let totalKeystrokes = 0;
+  let currentText = "";
+  let customLoaded = false;
+
+  function genWords(n){
+    let out = [];
+    for(let i=0;i<n;i++) out.push(commonWords[Math.floor(Math.random()*commonWords.length)]);
+    return out.join(" ");
+  }
+  function genSentences(n){
+    let out = [];
+    let pool = [...sentences];
+    for(let i=0;i<n;i++){
+      if(pool.length===0) pool=[...sentences];
+      const idx = Math.floor(Math.random()*pool.length);
+      out.push(pool.splice(idx,1)[0]);
+    }
+    return out.join(" ");
+  }
+
+  function newText(){
+    customLoaded = false;
+    document.querySelectorAll('.keycap').forEach(k => k.classList.remove('active-lesson'));
+    if(difficulty === 'words'){
+      currentText = genWords(60);
+    } else {
+      currentText = genSentences(3);
+    }
+    renderText();
+  }
+
+  function loadCustomText(text){
+    customLoaded = true;
+    currentText = text;
+    resetState(false);
+    renderText();
+  }
+
+  const textInner = document.getElementById('textInner');
+
+  function renderText(){
+    textInner.style.transform = 'translateY(0px)';
+    textInner.innerHTML = currentText.split("").map((ch,i) =>
+      `<span data-i="${i}">${ch}</span>`
+    ).join("");
+    markCurrent(0);
+  }
+
+  function markCurrent(pos){
+    const spans = textInner.querySelectorAll('span');
+    spans.forEach(s => s.classList.remove('current'));
+    const target = spans[pos] || spans[spans.length-1];
+    if(target) target.classList.add('current');
+    slideToLine(target);
+  }
+
+  function slideToLine(span){
+    if(!span) return;
+    const fontSizePx = parseFloat(getComputedStyle(textDisplay).fontSize);
+    const lineHeightPx = fontSizePx * 1.9;
+    const lineIndex = Math.round(span.offsetTop / lineHeightPx);
+    const shiftLines = Math.max(0, lineIndex - 1);
+    textInner.style.transform = `translateY(${-shiftLines * lineHeightPx}px)`;
+  }
+
+  function resetState(genNew=true){
+    clearInterval(timerId);
+    timerId = null;
+    started = false;
+    finished = false;
+    typedChars = [];
+    correctCount = 0;
+    errorCount = 0;
+    totalKeystrokes = 0;
+    timeLeft = timeLimit;
+    statTime.textContent = timeLeft;
+    statWpm.textContent = "0";
+    statAcc.textContent = "100%";
+    statErr.textContent = "0";
+    resultsEl.classList.remove('show');
+    hiddenInput.value = "";
+    if(genNew) newText(); else renderText();
+  }
+
+  function startTimer(){
+    started = true;
+    timerId = setInterval(() => {
+      timeLeft--;
+      statTime.textContent = timeLeft;
+      updateLiveWpm();
+      if(timeLeft <= 0){
+        finishTest();
+      }
+    }, 1000);
+  }
+
+  function updateLiveWpm(){
+    const elapsedMin = (timeLimit - timeLeft) / 60;
+    if(elapsedMin <= 0) return;
+    const wpm = Math.round((correctCount / 5) / elapsedMin);
+    statWpm.textContent = Math.max(0, wpm);
+    const acc = totalKeystrokes > 0 ? Math.round((correctCount / totalKeystrokes) * 100) : 100;
+    statAcc.textContent = acc + "%";
+  }
+
+  function finishTest(){
+    clearInterval(timerId);
+    finished = true;
+    hiddenInput.blur();
+    const elapsedMin = timeLimit / 60;
+    const finalWpm = Math.round((correctCount / 5) / elapsedMin);
+    const rawWpm = Math.round((totalKeystrokes / 5) / elapsedMin);
+    const acc = totalKeystrokes > 0 ? Math.round((correctCount / totalKeystrokes) * 100) : 100;
+
+    document.getElementById('resultWpm').textContent = Math.max(0,finalWpm);
+    document.getElementById('resultAcc').textContent = acc + "%";
+    document.getElementById('resultRaw').textContent = Math.max(0,rawWpm);
+    document.getElementById('resultChars').textContent = totalKeystrokes;
+    document.getElementById('resultErr').textContent = errorCount;
+    resultsEl.classList.add('show');
+    resultsEl.scrollIntoView({behavior:'smooth', block:'nearest'});
+  }
+
+  hiddenInput.addEventListener('input', (e) => {
+    if(finished) return;
+    if(!started) startTimer();
+
+    const val = hiddenInput.value;
+    const spans = textInner.querySelectorAll('span');
+    const pos = val.length - 1;
+
+    if(val.length > typedChars.length){
+      const idx = val.length - 1;
+      totalKeystrokes++;
+      const expected = currentText[idx];
+      const typedCh = val[idx];
+      if(spans[idx]){
+        if(typedCh === expected){
+          spans[idx].classList.add('correct');
+          spans[idx].classList.remove('incorrect');
+          correctCount++;
+        } else {
+          spans[idx].classList.add('incorrect');
+          spans[idx].classList.remove('correct');
+          errorCount++;
+        }
+      }
+    } else {
+      const idx = val.length;
+      if(spans[idx]){
+        if(spans[idx].classList.contains('correct')) correctCount = Math.max(0,correctCount-1);
+        spans[idx].classList.remove('correct','incorrect');
+      }
+    }
+    typedChars = val.split("");
+    markCurrent(val.length);
+    statErr.textContent = errorCount;
+    updateLiveWpm();
+
+    if(val.length >= currentText.length){
+      finishTest();
+    }
+  });
+
+  typeBox.addEventListener('click', () => hiddenInput.focus());
+  typeBox.addEventListener('mousemove', (e) => {
+    const rect = typeBox.getBoundingClientRect();
+    typeBox.style.setProperty('--mx', ((e.clientX-rect.left)/rect.width*100)+'%');
+  });
+  hiddenInput.addEventListener('focus', () => typeBox.classList.add('focused'));
+  hiddenInput.addEventListener('blur', () => typeBox.classList.remove('focused'));
+
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape'){ resetState(!customLoaded); if(customLoaded){renderText();} }
+  });
+
+  resetBtn.addEventListener('click', () => resetState(true));
+  tryAgainBtn.addEventListener('click', () => { resetState(!customLoaded); hiddenInput.focus(); });
+
+  timeChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      timeChips.forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      timeLimit = parseInt(chip.dataset.time,10);
+      resetState(!customLoaded);
+    });
+  });
+  diffChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      diffChips.forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      difficulty = chip.dataset.diff;
+      resetState(true);
+    });
+  });
+
+  resetState(true);
+
+})();
+</script>
+
+</body>
+</html>
