@@ -1,0 +1,45 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F0F1A"/>
+      <stop offset="100%" stop-color="#1A1A2E"/>
+    </linearGradient>
+    <linearGradient id="bolt" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#00F5D4"/>
+      <stop offset="100%" stop-color="#00B4D8"/>
+    </linearGradient>
+    <linearGradient id="txt" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00F5D4"/>
+      <stop offset="100%" stop-color="#FFFFFF"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <circle cx="256" cy="256" r="256" fill="url(#bg)"/>
+  <circle cx="256" cy="256" r="248" fill="none" stroke="#00F5D4" stroke-width="3" opacity="0.4"/>
+
+  <!-- Speed streaks -->
+  <g stroke="#00F5D4" stroke-width="6" stroke-linecap="round" opacity="0.5">
+    <line x1="70" y1="130" x2="140" y2="130"/>
+    <line x1="50" y1="165" x2="160" y2="165"/>
+  </g>
+
+  <!-- Glowing lightning bolt, pulled up and shrunk to leave room for text -->
+  <path d="M 296 70 L 232 195 L 268 195 L 244 300 L 340 155 L 296 155 Z"
+        fill="url(#bolt)" filter="url(#glow)"/>
+
+  <!-- Text: bold, condensed, fitted with textLength so it never overflows -->
+  <text x="256" y="378" font-family="Arial Black, Arial, Helvetica, sans-serif" font-weight="900"
+        font-style="italic" font-size="58" text-anchor="middle" fill="url(#txt)"
+        textLength="360" lengthAdjust="spacingAndGlyphs">TYPE</text>
+  <text x="256" y="432" font-family="Arial Black, Arial, Helvetica, sans-serif" font-weight="900"
+        font-style="italic" font-size="58" text-anchor="middle" fill="#FFFFFF"
+        textLength="360" lengthAdjust="spacingAndGlyphs">FASTER</text>
+</svg>
