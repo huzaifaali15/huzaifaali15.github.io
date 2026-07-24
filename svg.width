@@ -1,0 +1,28 @@
+<svg width="360" height="90" viewBox="0 0 360 90" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bolt" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#00F5D4"/>
+      <stop offset="100%" stop-color="#00B4D8"/>
+    </linearGradient>
+    <linearGradient id="txt" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00F5D4"/>
+      <stop offset="100%" stop-color="#FFFFFF"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Icon: rounded square badge with bolt -->
+  <rect x="6" y="9" width="72" height="72" rx="18" fill="#0F0F1A"/>
+  <rect x="6" y="9" width="72" height="72" rx="18" fill="none" stroke="#00F5D4" stroke-width="2" opacity="0.5"/>
+  <path d="M 52 22 L 30 50 L 44 50 L 36 68 L 60 40 L 46 40 Z" fill="url(#bolt)" filter="url(#glow)"/>
+
+  <!-- Wordmark, sitting to the right of the icon -->
+  <text x="92" y="56" font-family="Arial Black, Arial, Helvetica, sans-serif" font-weight="900"
+        font-style="italic" font-size="34" fill="url(#txt)">TYPEFASTER</text>
+</svg>
